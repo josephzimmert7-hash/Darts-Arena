@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07110d">
+<title>DARTS ARENA – by Joseph Zimmert</title>
+<style>
+:root{--bg:#07110d;--panel:#101d17;--panel2:#14251c;--line:#294333;--green:#55e38a;--green2:#20b965;--muted:#9aafa2;--text:#f1f8f3;--red:#ff7272;--gold:#ffd36b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#183d29 0,transparent 55%),var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{padding:32px 18px 24px;text-align:center;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0d2117aa,transparent)}
+.logo{font-size:clamp(2.1rem,8vw,4.5rem);font-weight:950;letter-spacing:.055em;line-height:1;color:#fff;text-shadow:0 0 28px #38d87855}.logo span{color:var(--green)}.by{margin-top:9px;color:var(--muted);letter-spacing:.22em;text-transform:uppercase;font-size:.78rem}
+main{width:min(1180px,100%);margin:auto;padding:18px 14px 60px}.tabs{display:flex;gap:8px;overflow:auto;padding:4px 0 14px;position:sticky;top:0;background:#07110deF;z-index:5}
+.tab{white-space:nowrap;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--muted);padding:10px 15px;font-weight:750;cursor:pointer}.tab.active{background:var(--green);color:#06140b;border-color:var(--green)}
+.panel{background:linear-gradient(145deg,#14251c,#0e1a14);border:1px solid var(--line);border-radius:18px;padding:17px;margin:0 0 16px;box-shadow:0 10px 35px #0003}.panel h2,.panel h3{margin:0 0 12px}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}label{font-size:.82rem;color:var(--muted);font-weight:700}input,select{width:100%;background:#08130d;border:1px solid #35523f;color:var(--text);border-radius:10px;padding:12px;font:inherit;min-height:45px}input:focus,select:focus{outline:2px solid var(--green);border-color:transparent}
+button{font:inherit}.btn{border:0;border-radius:11px;background:var(--green);color:#06140b;font-weight:850;padding:12px 16px;cursor:pointer;min-height:44px}.btn.secondary{background:#1c3527;color:var(--text);border:1px solid #3b6048}.btn.danger{background:#542626;color:#ffdede;border:1px solid #8b4141}.btn.small{padding:7px 10px;min-height:36px;font-size:.85rem}.btn:disabled{opacity:.35;cursor:not-allowed}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.player-tools{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.player-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;max-height:360px;overflow:auto;padding:2px}.player{display:flex;align-items:center;gap:8px;background:#0a160f;border:1px solid #243d2d;border-radius:10px;padding:8px;min-width:0}.player input{width:18px;min-height:18px;accent-color:var(--green)}.player span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rank{color:var(--green);font-weight:850;min-width:30px;font-size:.82rem}
+.hidden{display:none!important}.statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}.stat{background:#09150e;border:1px solid var(--line);padding:12px;border-radius:12px;text-align:center}.stat b{display:block;font-size:1.35rem;color:var(--green)}.stat small{color:var(--muted)}
+.match{background:#0a160f;border:1px solid #294333;border-radius:12px;padding:12px;margin:8px 0}.match-head{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:.78rem;margin-bottom:8px}.versus{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}.side{min-width:0}.side:last-child{text-align:right}.side strong{display:block;overflow-wrap:anywhere}.score{font-size:1.2rem;font-weight:900;color:var(--green);white-space:nowrap}.winner{color:var(--gold)}.bracket{display:flex;gap:14px;overflow-x:auto;padding-bottom:10px;align-items:flex-start}.round{min-width:220px;flex:1}.round h4{color:var(--green);margin:4px 0 8px}.round .match{margin-bottom:12px}.champ{border:1px solid #8c7331;background:linear-gradient(135deg,#332b12,#111b13);padding:18px;border-radius:16px;text-align:center;margin:15px 0}.champ .cup{font-size:2.6rem}.champ h2{color:var(--gold);margin:4px}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:440px}th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line)}th{color:var(--green);font-size:.8rem}.notice{background:#152b1e;border-left:3px solid var(--green);padding:10px 12px;border-radius:8px;color:#ccebd6;font-size:.88rem;margin:10px 0}
+footer{text-align:center;color:#698071;font-size:.78rem;padding:20px}
+@media(min-width:760px){main{padding:24px}.player-list{grid-template-columns:repeat(3,minmax(0,1fr))}.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.field.full{grid-column:span 2}}
+@media(max-width:430px){.player-list{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.statrow{gap:5px}.stat{padding:9px 4px}.stat b{font-size:1.15rem}}
+
+.leg-details{margin-top:12px;padding-top:10px;border-top:1px solid var(--line,#333)}.leg-details h4{margin:0 0 8px}.leg-details table{font-size:12px;min-width:390px}.leg-details td{vertical-align:top;line-height:1.55}.avg-summary{margin-top:10px;padding:10px;border-radius:10px;background:rgba(80,190,130,.10);font-size:14px}.leg-details .tablewrap{overflow-x:auto}
+.leg-scoreboard{display:flex;flex-direction:column;align-items:center;gap:3px;margin:10px 0;padding:10px;border-radius:10px;background:rgba(80,190,130,.10);border:1px solid rgba(80,190,130,.22)}.leg-scoreboard>span{font-size:11px;color:var(--muted,#aaa)}.leg-scoreboard strong{font-size:25px;letter-spacing:2px}.leg-scoreboard small{font-size:11px;color:var(--muted,#aaa)}.round-sim{margin:0 0 10px;width:100%}</style>
+</head>
+<body>
+<header><div class="logo">DARTS <span>ARENA</span></div><div class="by">by Joseph Zimmert</div></header>
+<main>
+<nav class="tabs" aria-label="Navigation">
+<button class="tab active" data-tab="create">Turnier erstellen</button><button class="tab" data-tab="live">Turnier</button><button class="tab" data-tab="saved">Gespeicherte Turniere</button>
+</nav>
+<section id="create">
+<div class="panel">
+<h2>Neues Turnier</h2>
+<div class="grid">
+<div class="field full"><label for="pdcEvent">Offizieller PDC-Wettbewerb</label>
+<select id="pdcEvent">
+<optgroup label="PDC Premier Events">
+<option value="Paddy Power World Darts Championship">Paddy Power World Darts Championship</option>
+<option value="BetMGM Premier League">BetMGM Premier League</option>
+<option value="Betfred World Matchplay">Betfred World Matchplay</option>
+<option value="Winmau World Masters">Winmau World Masters</option>
+<option value="Mr Vegas Grand Slam of Darts">Mr Vegas Grand Slam of Darts</option>
+<option value="Ladbrokes UK Open">Ladbrokes UK Open</option>
+<option value="BetVictor World Cup of Darts">BetVictor World Cup of Darts</option>
+<option value="BoyleSports World Grand Prix">BoyleSports World Grand Prix</option>
+<option value="Jack's Casino World Series of Darts Finals">Jack's Casino World Series of Darts Finals</option>
+<option value="Ladbrokes Players Championship Finals">Ladbrokes Players Championship Finals</option>
+<option value="Machineseeker European Championship">Machineseeker European Championship</option>
+</optgroup>
+<optgroup label="PDC ProTour">
+<option value="Players Championship – Event">Players Championship – Event (PC 1–34)</option>
+<option value="European Tour – Event">European Tour – Event (ET 1–15)</option>
+</optgroup>
+<optgroup label="PDC World Series">
+<option value="Bahrain Darts Masters">Bahrain Darts Masters</option>
+<option value="Saudi Arabia Darts Masters">Saudi Arabia Darts Masters</option>
+<option value="Nordic Darts Masters">Nordic Darts Masters</option>
+<option value="US Darts Masters">US Darts Masters</option>
+<option value="Australia Darts Masters">Australia Darts Masters</option>
+<option value="New Zealand Darts Masters">New Zealand Darts Masters</option>
+</optgroup>
+<optgroup label="PDC Secondary Tours">
+<option value="PDC Challenge Tour">PDC Challenge Tour</option>
+<option value="PDC Development Tour">PDC Development Tour</option>
+<option value="PDC Women's Series">PDC Women's Series</option>
+<option value="PDC World Youth Championship">PDC World Youth Championship</option>
+</optgroup>
+</select></div>
+<div class="field full"><label for="tname">Turniername / Ausgabe</label><input id="tname" maxlength="80" value="Paddy Power World Darts Championship"></div>
+<div class="field"><label for="format">Format</label><select id="format"><option value="ko">K.-o.-Turnier</option><option value="groups">Gruppenphase + K.-o.</option><option value="league">Liga – jeder gegen jeden</option></select></div>
+<div class="field"><label for="legs">Legs zum Sieg</label><select id="legs"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div>
+<div class="field"><label for="groupSize">Spieler pro Gruppe</label><select id="groupSize"><option value="3">3</option><option value="4" selected>4</option><option value="5">5</option><option value="6">6</option></select></div>
+<div class="field"><label for="qualify">Qualifizieren je Gruppe</label><select id="qualify"><option value="1">1</option><option value="2" selected>2</option></select></div>
+</div>
+<div class="notice">Standardmäßig sind die Top 32 ausgewählt, damit die Seite auf dem iPhone schnell startet. Du kannst weitere Spieler auswählen oder über „Alle auswählen“ alle markieren. Für ein klassisches Turnier sind 8, 16, 32 oder 64 Spieler ideal. Bei anderen Zahlen werden Freilose automatisch verteilt.</div>
+</div>
+<div class="panel">
+<h2>Spieler auswählen <span class="muted" id="selectedCount">(0 ausgewählt)</span></h2>
+<div class="field"><label for="playerSearch">Spieler suchen</label><input id="playerSearch" placeholder="Name oder Rang eingeben …"></div>
+<div class="player-tools"><button class="btn secondary small" id="selectAll">Alle auswählen</button><button class="btn secondary small" id="selectNone">Auswahl aufheben</button><button class="btn secondary small" id="top32">Top 32 auswählen</button></div>
+<div class="player-list" id="playerList"></div>
+<div class="grid" style="margin-top:14px">
+<div class="field"><label for="customName">Eigenen Spieler hinzufügen</label><input id="customName" maxlength="40" placeholder="Spielername"></div>
+<div class="field" style="justify-content:end"><button class="btn secondary" id="addPlayer">+ Spieler hinzufügen</button></div>
+</div>
+<div id="customList" class="muted" style="margin-top:8px"></div>
+<div class="actions"><button class="btn" id="createTournament">Turnier starten</button></div>
+</div>
+</section>
+<section id="live" class="hidden">
+<div id="tournamentView"><div class="panel muted">Noch kein Turnier gestartet. Erstelle zuerst ein Turnier.</div></div>
+</section>
+<section id="saved" class="hidden">
+<div class="panel"><h2>Gespeicherte Turniere</h2><div id="savedList" class="muted">Noch keine gespeicherten Turniere.</div></div>
+</section>
+<footer>DARTS ARENA · Offline-fähig · Daten bleiben in diesem Browser gespeichert<br>Spielerrangliste: Live Order of Merit, Stand 29.10.2026 · <a href="https://www.dartsrankings.com/?wpmobileexternal=true" target="_blank" rel="noopener" style="color:#55e38a">Datenquelle ansehen</a></footer>
+</main>
+<script>
+"use strict";
+const RANK_DATE="29. Oktober 2026";
+const rawPlayers = `
+1|Luke Littler
+2|Gian van Veen
+3|Luke Humphries
+4|Gerwyn Price
+5|Jonny Clayton
+6|Ross Smith
+7|James Wade
+8|Josh Rock
+9|Nathan Aspinall
+10|Stephen Bunting
+11|Danny Noppert
+12|Michael van Gerwen
+13|Wessel Nijman
+14|Gary Anderson
+15|Ryan Searle
+16|Chris Dobey
+17|Luke Woodhouse
+18|Jermaine Wattimena
+19|Krzysztof Ratajski
+20|Martin Schindler
+21|Damon Heta
+22|Dirk van Duijvenbode
+23|Kevin Doets
+24|Rob Cross
+25|Ryan Joyce
+26|Cameron Menzies
+27|Andrew Gilding
+28|Niels Zonneveld
+29|Dave Chisnall
+30|William O'Connor
+31|Daryl Gurney
+32|Joe Cullen
+33|Mike De Decker
+34|Niko Springer
+35|Peter Wright
+36|Ricardo Pietreczko
+37|Michael Smith
+38|Justin Hood
+39|Jeffrey de Graaf
+40|Karel Sedlacek
+40|Callan Rydz
+42|Mickey Mansell
+43|Martin Lukeman
+44|Scott Williams
+45|James Hurrell
+46|Kim Huybrechts
+47|Madars Razma
+48|Brendan Dolan
+49|Raymond van Barneveld
+50|Connor Scutt
+51|Sebastian Bialecki
+52|Ricky Evans
+53|Gabriel Clemens
+54|Ritchie Edhouse
+55|Mensur Suljovic
+56|Keane Barry
+57|Ian White
+58|Richard Veenstra
+59|Dimitri Van den Bergh
+60|Bradley Brooks
+61|Alan Soutar
+62|Rob Owen
+63|Lukas Wenig
+64|Nick Kenny
+65|Ryan Meikle
+66|Max Hopp
+67|Mario Vandenbogaerde
+68|Cristo Reyes
+69|Cam Crabtree
+70|Wesley Plaisier
+71|Maik Kuivenhoven
+72|Thibault Tricole
+73|Tom Bissell
+74|Adam Lipscombe
+75|Beau Greaves
+76|Darryl Pilgrim
+77|Cor Dekker
+78|Charlie Manby
+78|Dominik Gruellich
+80|Christian Kist
+81|Tom Sykes
+82|Andy Boulton
+83|Jim Long
+84|Oskar Lukasiak
+85|Joe Hunt
+86|Darius Labanauskas
+86|Jimmy van Schie
+88|Thomas Lovely
+89|Leon Weber
+90|Tommy Morris
+91|Viktor Tingstrom
+91|Marvin van Velzen
+93|Tavis Dudeney
+94|Alexander Merkx
+94|Shane McGuirk
+96|Henry Coates
+97|Owen Bates
+97|Adam Gawlas
+99|Greg Ritchie
+100|Kai Gotthardt
+101|Adam Paxton
+102|David Sharp
+103|Stephen Burton
+104|Jurjen van der Velde
+105|Jeffrey De Zwaan
+106|Martijn Dragt
+107|Mervyn King
+108|Chris Landman
+108|Dennie Olde Kalter
+108|Adam Warner
+111|Benjamin Pratnemer
+112|Jeffrey Sparidaans
+113|Tyler Thorpe
+114|Tommy Lishman
+115|Niall Culleton
+116|Sietse Lap
+117|Scott Waites
+118|Jack Tweddell
+119|Arno Merk
+120|Adam Leek
+120|Stefan Bellmont
+122|Maximilian Czerwinski
+123|Rhys Griffin
+124|Steve Lennon
+124|Derek Coulson
+126|Stephen Rosney
+127|Nathan Potter
+128|Stefaan Henderyck
+129|Tytus Kanik
+130|Carl Sneyd
+131|Harry Ward
+132|Samuel Price
+133|Daniel Klose
+134|Daniel Ayres
+135|Yorick Hofkens
+136|Lewis Pride
+136|Pascal Rupprecht
+138|Andy Baetens
+139|Rusty-Jake Rodriguez
+140|Marvin Kraft
+140|Paul Krohne
+142|Boris Krcmar
+143|Jonas Masalin
+143|Michael Unterbuchner
+145|Jan Schmidt
+145|Patrik Kovacs
+147|Pero Ljubic
+148|Christopher Wickenden
+149|Johan Engstrom
+150|Nandor Major
+150|Dragutin Horvat
+150|Marcel Hausotter
+153|Jack Aldridge
+154|Patrik Williams
+154|Oliver Mitchell
+156|Krzysztof Kciuk
+156|Gyorgy Jehirszki
+156|Jani Haavisto
+156|Finn Behrens
+156|Callum Goffin
+156|Anton Ostlund
+162|Ted Evetts
+162|Aden Kirk
+162|Filip Bereza
+162|Scott Campbell
+166|Heine Uuldriks
+166|Laszlo Kadar
+166|Valters Melderis
+169|Archie Self
+170|Gilbert van der Meijden
+170|Graham Hall
+172|Maikel Verberk
+172|Alex Fehlmann
+172|Bruno Stoeckli
+172|Roman Wellinger
+172|Jaimy Jacobs
+172|Jeroen Caron
+172|Kevin Lankhuizen
+172|Michael Hansen
+172|Petr Tous
+172|David Rosi
+172|Jiri Brejcha
+172|Martin Homola
+172|Andras Borbely
+172|David Pisek
+172|Milan Biro
+172|Jaimy Van de Weerd
+172|Michal Smejda
+172|Mio Varila
+172|Adrian Dudek
+172|Gabriel Varaljay
+172|Jan Sliacky
+172|Juraj Holub
+172|Peter Kelemen
+172|Jason Riedtke
+172|Teemu Harju
+172|Liam Maendl-Lawrance
+172|Aaron Hardy
+172|Nick Zwittnigg
+172|Zoran Lerchbacher
+172|Michael Hurtz
+172|Petr Krivka
+172|Robin Masino
+172|Kevin Troppmann
+172|Francois Schweyen
+172|Pascal Devroey
+172|Florian Hempel
+172|Florian Preis
+172|Wojciech Brulinski
+172|Sam Spivey
+172|Andreas Harrysson
+172|Dawid Robak
+172|Miroslaw Grudziecki
+172|Piotr Maciejczak
+215|Levy Frauenfelder
+215|Kevin Burness
+215|Danny Trueman
+215|Matthias Ehlers
+215|Jack Todd
+215|Jamai van den Herik
+215|Oliver King
+215|Ron Meulenkamp
+215|Samuel Whittaker
+224|Danny van Trijp
+224|Jesus Salate`;
+const players=rawPlayers.trim().split("\n").map((s,i)=>{const [rank,name]=s.split("|");return {id:"p"+i,name,rank:Number(rank),custom:false};});
+let customPlayers=[];
+let selected=new Set(players.filter(p=>p.rank<=32).map(p=>p.id));
+let tournament=null;
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function allPlayers(){return [...players,...customPlayers];}
+function switchTab(name){document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));["create","live","saved"].forEach(id=>$(id).classList.toggle("hidden",id!==name));if(name==="saved")renderSaved();}
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
+function renderPlayers(){const q=$("playerSearch").value.trim().toLowerCase();const list=allPlayers().filter(p=>(p.name.toLowerCase().includes(q)||String(p.rank).includes(q)));$("playerList").innerHTML=list.map(p=>`<label class="player"><input type="checkbox" data-player="${p.id}" ${selected.has(p.id)?"checked":""}><span class="rank">${p.custom?"★":"#"+p.rank}</span><span>${esc(p.name)}</span></label>`).join("");$("selectedCount").textContent=`(${selected.size} ausgewählt)`;document.querySelectorAll("[data-player]").forEach(c=>c.addEventListener("change",()=>{c.checked?selected.add(c.dataset.player):selected.delete(c.dataset.player);$("selectedCount").textContent=`(${selected.size} ausgewählt)`;}));$("customList").innerHTML=customPlayers.length?"Eigene Spieler: "+customPlayers.map(p=>`${esc(p.name)} <button class="btn danger small" data-remove="${p.id}">Entfernen</button>`).join(" "):"";document.querySelectorAll("[data-remove]").forEach(b=>b.addEventListener("click",()=>{selected.delete(b.dataset.remove);customPlayers=customPlayers.filter(p=>p.id!==b.dataset.remove);renderPlayers();}));}
+$("playerSearch").addEventListener("input",renderPlayers);
+$("selectAll").onclick=()=>{allPlayers().forEach(p=>selected.add(p.id));renderPlayers();};
+$("selectNone").onclick=()=>{selected.clear();renderPlayers();};
+$("top32").onclick=()=>{selected=new Set(players.filter(p=>p.rank<=32).map(p=>p.id));renderPlayers();};
+$("addPlayer").onclick=()=>{try{const name=$("customName").value.trim();if(!name)return alert("Bitte einen Spielernamen eingeben.");if(allPlayers().some(p=>p.name.toLowerCase()===name.toLowerCase()))return alert("Dieser Spieler ist bereits vorhanden.");const p={id:"c"+Date.now(),name,rank:null,custom:true};customPlayers.push(p);selected.add(p.id);$("customName").value="";renderPlayers();$("appError").classList.add("hidden");}catch(e){showError(e);}};
+function uid(){return "m"+Math.random().toString(36).slice(2,10);}
+function makeMatch(a,b,round,group){return {id:uid(),a:a||null,b:b||null,round,group:group??null,sa:null,sb:null,winner:null,done:false};}
+function shuffle(a){const x=[...a];for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]];}return x;}
+function power2(n){let x=1;while(x<n)x*=2;return x;}
+function simulateOneLeg(match){if(match.done||!match.a||!match.b)return false;const legs=Number(tournament.legs);const strength=(p)=>p.custom?0.5:Math.max(0,Math.min(.22,(35-p.rank)/160));const aProb=Math.max(.25,Math.min(.75,.5+strength(match.a)-strength(match.b)));if(!match.legDetails)match.legDetails=[];const aWins=Math.random()<aProb;const avgA=78+Math.random()*28+(strength(match.a)*30);const avgB=78+Math.random()*28+(strength(match.b)*30);const da=15+Math.floor(Math.random()*13),db=15+Math.floor(Math.random()*13);const scoreA=Math.round(avgA*da/3),scoreB=Math.round(avgB*db/3);const prevA=match.sa||0,prevB=match.sb||0;if(aWins)match.sa=prevA+1;else match.sb=prevB+1;match.legDetails.push({number:match.legDetails.length+1,scoreA,scoreB,dartsA:da,dartsB:db,avgA:scoreA/da*3,avgB:scoreB/db*3,winner:(aWins?match.a:match.b).name,legsA:match.sa,legsB:match.sb});const all=match.legDetails;const pointsA=all.reduce((n,l)=>n+l.scoreA,0),pointsB=all.reduce((n,l)=>n+l.scoreB,0),dartsA=all.reduce((n,l)=>n+l.dartsA,0),dartsB=all.reduce((n,l)=>n+l.dartsB,0);match.stats={pointsA,pointsB,dartsA,dartsB,avgA:pointsA/dartsA*3,avgB:pointsB/dartsB*3};if(match.sa>=legs||match.sb>=legs){match.winner=match.sa>match.sb?match.a:match.b;match.done=true;}return true;}
+function simulate(match){if(match.done||!match.a||!match.b)return false;while(!match.done)simulateOneLeg(match);return true;}
+function createKO(playersIn,roundName="Runde 1"){const slots=power2(playersIn.length);const arr=[...playersIn];while(arr.length<slots)arr.push(null);const shuffled=shuffle(arr);let matches=[];for(let i=0;i<shuffled.length;i+=2){let m=makeMatch(shuffled[i],shuffled[i+1],roundName);if(m.a&&!m.b){m.winner=m.a;m.done=true;m.sa=0;m.sb=0;}else if(!m.a&&m.b){m.winner=m.b;m.done=true;m.sa=0;m.sb=0;}matches.push(m);}return {rounds:[matches],champion:null};}
+function advanceKO(){const rounds=tournament.data.rounds;for(let r=0;r<rounds.length;r++){const ms=rounds[r];if(ms.every(m=>m.done)){if(ms.length===1){tournament.data.champion=ms[0].winner;return;}if(!rounds[r+1]){const next=[];for(let i=0;i<ms.length;i+=2)next.push(makeMatch(ms[i].winner,ms[i+1]?.winner||null,roundLabel(ms.length/2)));rounds.push(next);for(const m of next)if(m.a&&!m.b){m.winner=m.a;m.done=true;m.sa=0;m.sb=0;}}}else break;}}
+function roundLabel(n){return n===1?"Finale":n===2?"Halbfinale":n===4?"Viertelfinale":n===8?"Achtelfinale":`Letzte ${n*2}`;}
+function startTournament(){const chosen=allPlayers().filter(p=>selected.has(p.id)).map(p=>({id:p.id,name:p.name,rank:p.rank,custom:p.custom}));if(chosen.length<2)return alert("Bitte mindestens 2 Spieler auswählen.");const format=$("format").value;const legs=Number($("legs").value);tournament={id:uid(),name:$("tname").value.trim()||"Darts Arena",pdcEvent:$("pdcEvent").value,format,legs,players:chosen,created:new Date().toISOString(),data:{}};if(format==="ko"){tournament.data=createKO(chosen);}else if(format==="groups"){const size=Number($("groupSize").value),qual=Number($("qualify").value);if(chosen.length<size*2)return alert("Für Gruppenphase + K.-o. bitte mindestens zwei Gruppen ermöglichen.");const shuffled=shuffle(chosen),groups=[];for(let i=0;i<shuffled.length;i+=size)groups.push(shuffled.slice(i,i+size));tournament.data.groups=groups.map((g,i)=>({name:"Gruppe "+String.fromCharCode(65+i),players:g,matches:roundRobin(g,"Gruppe "+String.fromCharCode(65+i)),qualify:qual}));tournament.data.qualify=qual;tournament.data.ko=null;}else{tournament.data.matches=roundRobin(chosen,"Liga");}
+saveCurrent();renderTournament();switchTab("live");}
+function roundRobin(list,group){let arr=[...list];if(arr.length%2)arr.push(null);const n=arr.length,rounds=[];for(let r=0;r<n-1;r++){const ms=[];for(let i=0;i<n/2;i++){const a=arr[i],b=arr[n-1-i];if(a&&b)ms.push(makeMatch(a,b,`Spieltag ${r+1}`,group));}rounds.push(...ms);arr=[arr[0],arr[n-1],...arr.slice(1,n-1)];}return rounds;}
+$("createTournament").onclick=()=>{try{startTournament();$("appError").classList.add("hidden");}catch(e){showError(e);}};
+function scoreLabel(m){return m.done?`${m.sa} : ${m.sb}`:"– : –";}
+function matchHTML(m,idx){const details=m.legDetails?.length?`<div class="leg-details"><h4>Leg für Leg</h4><div class="tablewrap"><table><thead><tr><th>Leg</th><th>${esc(m.a?.name||"Spieler A")}</th><th>${esc(m.b?.name||"Spieler B")}</th><th>Leg-Sieger</th></tr></thead><tbody>${m.legDetails.map(l=>`<tr><td>${l.number}</td><td>${l.scoreA} Pkt. · ${l.dartsA} Darts<br><b>Avg. ${l.avgA.toFixed(2)}</b></td><td>${l.scoreB} Pkt. · ${l.dartsB} Darts<br><b>Avg. ${l.avgB.toFixed(2)}</b></td><td>${esc(l.winner)}</td></tr>`).join("")}</tbody></table></div><div class="avg-summary"><b>Match-Average:</b> ${esc(m.a?.name||"A")} ${m.stats?.avgA?.toFixed(2)||"–"} · ${esc(m.b?.name||"B")} ${m.stats?.avgB?.toFixed(2)||"–"}</div></div>`:"";return `<div class="match"><div class="match-head"><span>${esc(m.round||m.group||"Match")}</span><span>${m.done?"Beendet":"Offen"}</span></div><div class="versus"><div class="side"><strong class="${m.winner?.id===m.a?.id?"winner":""}">${esc(m.a?.name||"Freilos")}</strong></div><div class="score">${scoreLabel(m)}</div><div class="side"><strong class="${m.winner?.id===m.b?.id?"winner":""}">${esc(m.b?.name||"Freilos")}</strong></div></div>${m.a&&m.b?`<div class="leg-scoreboard"><span>Gewonnene Legs</span><strong>${m.sa||0} : ${m.sb||0}</strong><small>${esc(m.a.name)} <span>–</span> ${esc(m.b.name)}</small></div>`:""}${details}<div class="actions"><button class="btn secondary small" data-leg="${m.id}" ${m.done||!m.a||!m.b?"disabled":""}>1 Leg simulieren</button><button class="btn primary small" data-sim="${m.id}" ${m.done||!m.a||!m.b?"disabled":""}>Ganzes Match simulieren</button></div></div>`;}
+function bindSim(){document.querySelectorAll("[data-leg]").forEach(b=>b.onclick=()=>{const m=findMatch(b.dataset.leg);if(!m||!simulateOneLeg(m))return;afterMatch();});document.querySelectorAll("[data-sim]").forEach(b=>b.onclick=()=>{const m=findMatch(b.dataset.sim);if(!m||!simulate(m))return;afterMatch();});document.querySelectorAll("[data-round]").forEach(b=>b.onclick=()=>{const rounds=b.dataset.source==="groupko"?tournament?.data?.ko?.rounds:tournament?.data?.rounds;const matches=rounds?.[Number(b.dataset.round)];if(!matches)return;let changed=false;matches.forEach(m=>{if(!m.done&&m.a&&m.b){simulate(m);changed=true;}});if(changed){if(b.dataset.source==="groupko")advanceGroupKO();else advanceKO();saveCurrent();renderTournament();}});}
+function findMatch(id){if(!tournament)return null;const arrays=[];if(tournament.data.rounds)arrays.push(...tournament.data.rounds);if(tournament.data.matches)arrays.push(tournament.data.matches);(tournament.data.groups||[]).forEach(g=>arrays.push(g.matches));if(tournament.data.ko?.rounds)arrays.push(...tournament.data.ko.rounds);return arrays.flat().find(m=>m.id===id);}
+function afterMatch(){if(tournament.format==="ko")advanceKO();if(tournament.format==="groups"){const g=tournament.data.groups; if(g.every(x=>x.matches.every(m=>m.done))&&!tournament.data.ko){const qualifiers=g.flatMap(x=>standings(x).slice(0,x.qualify).map(r=>r.player));tournament.data.ko=createKO(qualifiers,"Viertelfinale");advanceGroupKO();}}if(tournament.format==="groups"&&tournament.data.ko)advanceGroupKO();saveCurrent();renderTournament();}
+function advanceGroupKO(){const ko=tournament.data.ko;if(!ko)return;for(let r=0;r<ko.rounds.length;r++){const ms=ko.rounds[r];if(ms.every(m=>m.done)){if(ms.length===1){ko.champion=ms[0].winner;return;}if(!ko.rounds[r+1]){const next=[];for(let i=0;i<ms.length;i+=2)next.push(makeMatch(ms[i].winner,ms[i+1]?.winner||null,roundLabel(ms.length/2)));ko.rounds.push(next);for(const m of next)if(m.a&&!m.b){m.winner=m.a;m.done=true;m.sa=0;m.sb=0;}}}else break;}}
+function standings(g){const rows=g.players.map(player=>({player,p:0,w:0,l:0,lf:0,la:0,d:0}));g.matches.filter(m=>m.done).forEach(m=>{const a=rows.find(x=>x.player.id===m.a.id),b=rows.find(x=>x.player.id===m.b.id);a.p++;b.p++;a.lf+=m.sa;a.la+=m.sb;b.lf+=m.sb;b.la+=m.sa;if(m.winner.id===a.player.id){a.w++;b.l++;}else{b.w++;a.l++;}});rows.forEach(x=>x.d=x.lf-x.la);return rows.sort((a,b)=>b.w-a.w||b.d-a.d||b.lf-a.lf||a.player.name.localeCompare(b.player.name));}
+function tableHTML(rows){return `<div class="tablewrap"><table><thead><tr><th>#</th><th>Spieler</th><th>Sp</th><th>S</th><th>N</th><th>Leg-Diff.</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.player.name)}</td><td>${r.p}</td><td>${r.w}</td><td>${r.l}</td><td>${r.d>0?"+":""}${r.d}</td></tr>`).join("")}</tbody></table></div>`;}
+function renderRounds(rounds,source="main"){return `<div class="bracket">${rounds.map((ms,i)=>`<div class="round"><h4>${esc(ms[0]?.round||roundLabel(Math.pow(2,rounds.length-i-1)))}</h4><button class="btn secondary small round-sim" data-round="${i}" data-source="${source}" ${ms.every(m=>m.done||!m.a||!m.b)?"disabled":""}>Ganze Runde simulieren</button>${ms.map(matchHTML).join("")}</div>`).join("")}</div>`;}
+function renderTournament(){if(!tournament)return;const done=allMatches().filter(m=>m.done).length,total=allMatches().length;let body=`<div class="panel"><h2>${esc(tournament.name)}</h2><div class="statrow"><div class="stat"><b>${tournament.players.length}</b><small>Spieler</small></div><div class="stat"><b>${done}/${total}</b><small>Matches</small></div><div class="stat"><b>${tournament.legs}</b><small>Legs zum Sieg</small></div></div><div class="muted">PDC-Wettbewerb: ${esc(tournament.pdcEvent||tournament.name)} · Format: ${tournament.format==="ko"?"K.-o.":tournament.format==="groups"?"Gruppen + K.-o.":"Liga"} · Erstellt: ${new Date(tournament.created).toLocaleDateString("de-DE")}</div><div class="actions"><button class="btn secondary small" id="simulateNext">Nächstes offenes Match simulieren</button><button class="btn secondary small" id="simulateAll">Alle offenen Matches simulieren</button><button class="btn danger small" id="resetTournament">Turnier zurücksetzen</button></div></div>`;
+if(tournament.format==="ko"){body+=`<div class="panel"><h3>Turnierbaum</h3>${renderRounds(tournament.data.rounds,"main")}${tournament.data.champion?championHTML(tournament.data.champion):""}</div>`;}
+if(tournament.format==="groups"){tournament.data.groups.forEach(g=>{body+=`<div class="panel"><h3>${esc(g.name)}</h3>${tableHTML(standings(g))}<h4>Gruppenspiele</h4>${g.matches.map(matchHTML).join("")}</div>`;});if(tournament.data.ko)body+=`<div class="panel"><h3>K.-o.-Phase</h3>${renderRounds(tournament.data.ko.rounds,"groupko")}${tournament.data.ko.champion?championHTML(tournament.data.ko.champion):""}</div>`;}
+if(tournament.format==="league"){const rows=standings({players:tournament.players,matches:tournament.data.matches});body+=`<div class="panel"><h3>Liga-Tabelle</h3>${tableHTML(rows)}</div><div class="panel"><h3>Alle Ligaspiele</h3>${tournament.data.matches.map(matchHTML).join("")}</div>`;if(tournament.data.matches.every(m=>m.done)&&rows.length)body+=championHTML(rows[0].player);}
+$("tournamentView").innerHTML=body;bindSim();$("simulateNext").onclick=()=>{const m=allMatches().find(x=>!x.done&&x.a&&x.b);if(m){simulate(m);afterMatch();}};$("simulateAll").onclick=()=>{let guard=0;while(guard++<2000){const m=allMatches().find(x=>!x.done&&x.a&&x.b);if(!m)break;simulate(m);if(tournament.format==="ko")advanceKO();if(tournament.format==="groups"){if(tournament.data.groups.every(g=>g.matches.every(x=>x.done))&&!tournament.data.ko){const q=tournament.data.groups.flatMap(g=>standings(g).slice(0,g.qualify).map(r=>r.player));tournament.data.ko=createKO(q,"K.-o.-Runde");}advanceGroupKO();}}saveCurrent();renderTournament();};$("resetTournament").onclick=()=>{if(confirm("Dieses Turnier wirklich zurücksetzen? Alle Ergebnisse werden gelöscht.")){const snapshot=tournament.players;const cfg={id:tournament.id,name:tournament.name,pdcEvent:tournament.pdcEvent,format:tournament.format,legs:tournament.legs,players:snapshot,created:tournament.created};tournament=cfg;if(cfg.format==="ko")tournament.data=createKO(snapshot);else if(cfg.format==="groups"){const size=Number($("groupSize").value)||4;const sh=shuffle(snapshot);tournament.data.groups=[];for(let i=0;i<sh.length;i+=size){const g=sh.slice(i,i+size);tournament.data.groups.push({name:"Gruppe "+String.fromCharCode(65+tournament.data.groups.length),players:g,matches:roundRobin(g,"Gruppe"),qualify:2});}tournament.data.qualify=2;}else tournament.data.matches=roundRobin(snapshot,"Liga");saveCurrent();renderTournament();}};}
+function allMatches(){if(!tournament)return[];const a=[];if(tournament.data.rounds)a.push(...tournament.data.rounds.flat());if(tournament.data.matches)a.push(...tournament.data.matches);(tournament.data.groups||[]).forEach(g=>a.push(...g.matches));if(tournament.data.ko)a.push(...tournament.data.ko.rounds.flat());return a;}
+function championHTML(p){return `<div class="champ"><div class="cup">🏆</div><div class="muted">TURNIERSIEGER</div><h2>${esc(p.name)}</h2><div>Glückwunsch zum Titel!</div></div>`;}
+function saveCurrent(){try{const arr=JSON.parse(localStorage.getItem("dartsArenaTournaments")||"[]");const idx=arr.findIndex(x=>x.id===tournament.id);if(idx>=0)arr[idx]=tournament;else arr.unshift(tournament);localStorage.setItem("dartsArenaTournaments",JSON.stringify(arr.slice(0,30)));localStorage.setItem("dartsArenaCurrent",tournament.id);}catch(e){console.warn("Speichern nicht möglich",e);}}
+function renderSaved(){let arr=[];try{arr=JSON.parse(localStorage.getItem("dartsArenaTournaments")||"[]");}catch(e){}$("savedList").innerHTML=arr.length?arr.map(t=>`<div class="match"><strong>${esc(t.name)}</strong><div class="muted">${t.players.length} Spieler · ${t.format==="ko"?"K.-o.":t.format==="groups"?"Gruppen + K.-o.":"Liga"} · ${new Date(t.created).toLocaleDateString("de-DE")}</div><div class="actions"><button class="btn secondary small" data-open="${t.id}">Öffnen</button><button class="btn danger small" data-delete="${t.id}">Löschen</button></div></div>`).join(""):"Noch keine gespeicherten Turniere.";document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{const t=arr.find(x=>x.id===b.dataset.open);if(t){tournament=t;renderTournament();switchTab("live");}});document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>{if(confirm("Gespeichertes Turnier löschen?")){arr=arr.filter(t=>t.id!==b.dataset.delete);localStorage.setItem("dartsArenaTournaments",JSON.stringify(arr));renderSaved();}});}
+function showError(e){const box=$("appError");box.textContent="Fehler: "+(e&&e.message?e.message:String(e))+" – bitte Seite neu laden und erneut versuchen.";box.classList.remove("hidden");console.error(e);}
+function restore(){try{const id=localStorage.getItem("dartsArenaCurrent"),arr=JSON.parse(localStorage.getItem("dartsArenaTournaments")||"[]");tournament=arr.find(t=>t.id===id)||null;if(tournament)renderTournament();}catch(e){tournament=null;}}
+$("pdcEvent").addEventListener("change",()=>{$("tname").value=$("pdcEvent").value;});
+$("playerSearch").value="";renderPlayers();restore();
+</script>
+</body></html>
